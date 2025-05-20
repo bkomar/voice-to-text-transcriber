@@ -9,6 +9,7 @@ import threading
 import whisper
 from datetime import datetime
 from pydub import AudioSegment
+from screeninfo import get_monitors
 
 
 RECORDINGS_DIR = "recordings"
@@ -20,19 +21,15 @@ class VoiceToTextApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Voice-to-Text Transcriber")
+
+        monitor = get_monitors()[0]
+ 
+        window_width = int(monitor.width * 0.5)
+        window_height = int(monitor.height * 0.4)
+
+        x = monitor.x + (monitor.width - window_width) // 2
+        y = monitor.y + (monitor.height - window_height) // 2
         
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-
-        # Set window size
-        window_width = int(screen_width * 0.75)
-        window_height = int(screen_height * 0.75)
-
-        # Calculate position
-        x = (screen_width // 2) - (window_width // 2)
-        y = (screen_height // 2) - (window_height // 2)
-
-        # Set geometry
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         self.is_recording = False

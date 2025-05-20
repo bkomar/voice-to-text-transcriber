@@ -3,6 +3,8 @@
 
 **Voice-to-Text Transcriber GUI** is a lightweight, open-source Python desktop application that lets you record audio and transcribe speech to text **locally using OpenAI’s Whisper model** — with no internet connection required. Manage, playback, and delete your recordings and transcripts via a simple, intuitive graphical interface.
 
+![App Sreenshot](app-index-scr.png)
+
 ## 🚀 Key Features
 
 - **Offline Speech-to-Text Transcription:** Powered by OpenAI Whisper models (`base` and `small`) running fully on your computer  
@@ -43,8 +45,8 @@ This app guarantees your privacy:
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/voice-to-text-gui.git
-   cd voice-to-text-gui
+   git clone https://github.com/bkomar/voice-to-text-transcriber.git
+   cd voice-to-text-transcriber
    ```
 
 3. To avoid dependency conflicts and keep your environment clean, it's recommended to use a **virtual environment**.
@@ -58,14 +60,12 @@ This app guarantees your privacy:
    pip install -r requirements.txt
    ```
 
-
-
 ## ▶️ How to Run
 
 Run the app with:
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 - Select transcription language and Whisper model (`base` or `small`)  
