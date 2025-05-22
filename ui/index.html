@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Voice-to-Text Transcriber</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #e53935;
+      --accent-dark: #b71c1c;
+      --bg: #f7f6f3;
+      --card-bg: #fff;
+      --border: #e0e0e0;
+      --text: #232323;
+      --muted: #757575;
+      --meta-bg: #f3f3f3;
+      --meta-border: #ececec;
+      --hover: #ffeaea;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .main-card {
+      max-width: 1000px;
+      margin: 3em auto;
+      background: var(--card-bg, #fff);
+      border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      padding: 2em 2em 1.5em 2em;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2em;
+      font-size: 0.97em;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      margin-bottom: 0.5em;
+    }
+    .header h1 {
+      font-size: 1.4em;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+    .controls {
+      display: flex;
+      gap: 1.5em;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.97em;
+    }
+    .dropdown-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2em;
+      min-width: 140px;
+    }
+    .dropdown-group label {
+      font-size: 0.97em;
+      color: var(--muted);
+      margin-bottom: 0.1em;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    .controls select {
+      font-size: 1em;
+      padding: 0.4em 0.9em;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--meta-bg);
+      color: var(--text);
+      transition: border 0.2s;
+      outline: none;
+    }
+    .controls select:focus {
+      border: 1.5px solid var(--accent);
+    }
+    #recordBtn {
+      display: flex;
+      align-items: center;
+      gap: 0.6em;
+      padding: 0.45em 1.2em;
+      border: none;
+      border-radius: 8px;
+      background: #f5f5f5;
+      color: #232323;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      transition: background 0.18s, box-shadow 0.18s;
+      outline: none;
+      min-width: 110px;
+      justify-content: center;
+    }
+    #recordBtn:hover, #recordBtn:focus {
+      background: #ffeaea;
+    }
+    #recordBtn:active, .recording #recordBtn {
+      background: #f8bbd0;
+    }
+    .record-dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #e53935;
+      margin-right: 0.1em;
+      box-shadow: 0 0 4px 1px #e53935;
+      transition: background 0.18s;
+    }
+    .recording .record-dot {
+      background: #ab2955;
+      box-shadow: 0 0 8px 2px #ab2955;
+    }
+    #status {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 1em;
+      margin-bottom: 0.2em;
+      min-height: 1.2em;
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      padding: 0.8em;
+      font-size: 1em;
+      background: var(--meta-bg);
+      resize: vertical;
+      margin-bottom: 0.5em;
+      color: var(--text);
+    }
+    .history {
+      margin-top: 1.2em;
+    }
+    .history h2 {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 0.5em;
+    }
+    .history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--meta-bg);
+      padding: 0.5em 0.5em 0.2em 0.5em;
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85em;
+    }
+    .history-table th, .history-table td {
+      padding: 0.14em 0.25em;
+      text-align: left;
+      border-bottom: 1px solid #ececec;
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-table th {
+      background: #faf9f8;
+      color: #757575;
+      font-weight: 500;
+      font-size: 0.85em;
+    }
+    .history-table tr:last-child td {
+      border-bottom: none;
+    }
+    .history-actions button {
+      background: none;
+      color: #757575;
+      border: none;
+      border-radius: 4px;
+      padding: 0.1em 0.4em;
+      font-size: 1em;
+      margin-right: 0.1em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .history-actions button:hover {
+      background: #fce4ec;
+      color: #ab2955;
+    }
+    @media (max-width: 600px) {
+      .main-card { padding: 1em; }
+      .controls { flex-direction: column; gap: 0.5em; }
+      .history-row { flex-direction: column; align-items: flex-start; gap: 0.2em; }
+      .history-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-card">
+    <div class="header">
+      <img src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f399.png" alt="mic" width="28" height="28">
+      <h1>Voice-to-Text</h1>
+    </div>
+    <div class="controls">
+      <div class="dropdown-group">
+        <label for="model">Model</label>
+        <select id="model">
+          <option value="base">Base</option>
+          <option value="small">Small</option>
+        </select>
+      </div>
+      <div class="dropdown-group">
+        <label for="language">Language</label>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="uk">Ukrainian</option>
+          <option value="es">Spanish</option>
+          <option value="de">German</option>
+        </select>
+      </div>
+      <div class="dropdown-group" style="align-self: flex-end;">
+        <label style="opacity:0;">&nbsp;</label>
+        <button id="recordBtn" aria-label="Record" title="Record">
+          <span class="record-dot" id="recordDot"></span>
+          <span id="recordLabel">Record</span>
+        </button>
+      </div>
+    </div>
+    <div id="status"></div>
+    <textarea id="transcription" readonly placeholder="Transcription will appear here..."></textarea>
+    <div class="history">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <h2 style="margin:0;">History</h2>
+        <button id="refreshBtn" title="Refresh" style="background:none;border:none;cursor:pointer;padding:4px;font-size:1.2em;line-height:1;">⟳</button>
+      </div>
+      <div class="history-list">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Duration</th>
+              <th>Date</th>
+              <th>Summary</th>
+              <th>Language</th>
+              <th>Model</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

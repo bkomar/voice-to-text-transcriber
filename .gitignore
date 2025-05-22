@@ -31,5 +31,5 @@ Thumbs.db
 # VS Code settings
 .vscode/
 
-# Logs
-*.log
+# node_modules
+node_modules/
